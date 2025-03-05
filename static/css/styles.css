@@ -1,0 +1,342 @@
+/* Estilos personalizados para o aplicativo de Logística e Gestão de Estoque */
+
+/* Variáveis de cor */
+:root {
+    --primary: #1a4f72;      /* Azul escuro para cabeçalhos */
+    --secondary: #0f8b8d;    /* Verde-azulado para botões secundários */
+    --accent: #ec7c26;       /* Laranja para acentos e botões importantes */
+    --danger: #e63946;       /* Vermelho para alertas */
+    --warning: #f2a83b;      /* Amarelo para avisos */
+    --success: #2a9d8f;      /* Verde turquesa para sucesso */
+    --light: #f8f9fa;        /* Tom claro para fundos */
+    --dark: #343a40;         /* Tom escuro para textos */
+    --background: #f0f4f8;   /* Fundo da página */
+    --card-bg: #ffffff;      /* Fundo dos cards */
+}
+
+/* Ajustes gerais */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background);
+    color: var(--dark);
+}
+
+/* Cabeçalhos */
+h2, h3, h4, h5 {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* Cards */
+.card {
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    border: none;
+    background-color: var(--card-bg);
+}
+
+.card-header {
+    border-radius: 6px 6px 0 0 !important;
+    background-color: var(--primary);
+    color: white;
+    font-weight: 500;
+    padding: 12px 16px;
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+/* Tabelas */
+.table th {
+    background-color: #e9f2fa;
+    color: var(--primary);
+    font-weight: 600;
+    border-bottom: 2px solid var(--primary);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(26, 79, 114, 0.05);
+}
+
+/* Ícones de logística nas tabelas */
+.table .fa-box, .table .fa-boxes, .table .fa-warehouse, 
+.table .fa-truck, .table .fa-shipping-fast {
+    color: var(--accent);
+    margin-right: 8px;
+}
+
+/* Formulários */
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.25rem rgba(26, 79, 114, 0.25);
+}
+
+.form-label {
+    font-weight: 500;
+    color: var(--primary);
+}
+
+/* Botões */
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-primary:hover {
+    background-color: #0f3a5c;
+    border-color: #0f3a5c;
+}
+
+.btn-secondary {
+    background-color: var(--secondary);
+    border-color: var(--secondary);
+}
+
+.btn-secondary:hover {
+    background-color: #0a7677;
+    border-color: #0a7677;
+}
+
+.btn-accent {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+.btn-accent:hover {
+    background-color: #d66e1e;
+    border-color: #d66e1e;
+    color: white;
+}
+
+.btn-outline-primary {
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn-outline-accent {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.btn-outline-accent:hover {
+    background-color: var(--accent);
+    color: white;
+}
+
+/* Badges e indicadores */
+.badge-suave {
+    background-color: var(--success);
+    color: white;
+}
+
+.badge-erratico {
+    background-color: var(--accent);
+    color: white;
+}
+
+.badge-intermitente {
+    background-color: var(--warning);
+    color: var(--dark);
+}
+
+.badge-esporadico {
+    background-color: var(--danger);
+    color: white;
+}
+
+/* Barra de navegação */
+.navbar {
+    background-color: var(--primary) !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand i {
+    margin-right: 8px;
+    font-size: 1.4rem;
+}
+
+.navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 500;
+}
+
+.navbar-nav .nav-link:hover, 
+.navbar-nav .nav-link.active {
+    color: white !important;
+}
+
+.navbar-nav .nav-link i {
+    margin-right: 6px;
+}
+
+/* Painéis de informação */
+.info-panel {
+    border-left: 4px solid var(--primary);
+    background-color: #e9f2fa;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.info-panel.warning {
+    border-left-color: var(--warning);
+    background-color: #fff8e6;
+}
+
+.info-panel.danger {
+    border-left-color: var(--danger);
+    background-color: #ffebee;
+}
+
+.info-panel.success {
+    border-left-color: var(--success);
+    background-color: #e6fff5;
+}
+
+/* KPI cards para dashboard */
+.kpi-card {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 8px;
+    transition: transform 0.2s;
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+}
+
+.kpi-card .kpi-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.kpi-card .kpi-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+}
+
+.kpi-card .kpi-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.kpi-card.warning .kpi-icon, .kpi-card.warning .kpi-value {
+    color: var(--warning);
+}
+
+.kpi-card.danger .kpi-icon, .kpi-card.danger .kpi-value {
+    color: var(--danger);
+}
+
+.kpi-card.success .kpi-icon, .kpi-card.success .kpi-value {
+    color: var(--success);
+}
+
+/* Loader personalizado com ícone de logística */
+.loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.loader-icon {
+    font-size: 3rem;
+    color: var(--primary);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.9); opacity: 0.7; }
+    50% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+/* Campos para detalhes de material */
+.material-property {
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    background-color: #f8f9fa;
+    border-left: 3px solid var(--primary);
+}
+
+.material-property .label {
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 0.25rem;
+}
+
+.material-property .value {
+    font-family: 'Consolas', monospace;
+}
+
+/* Indicadores de status */
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.status-indicator.green {
+    background-color: var(--success);
+}
+
+.status-indicator.orange {
+    background-color: var(--warning);
+}
+
+.status-indicator.red {
+    background-color: var(--danger);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 0.75rem;
+    }
+    
+    .table th, .table td {
+        padding: 0.5rem;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    .kpi-card {
+        padding: 1rem;
+    }
+    
+    .kpi-card .kpi-icon {
+        font-size: 2rem;
+    }
+    
+    .kpi-card .kpi-value {
+        font-size: 1.5rem;
+    }
+}

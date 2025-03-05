@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de Material - Gestão de Estoque</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-warehouse"></i> Sistema de Gestão de Estoque
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="fas fa-boxes"></i> Estoque</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/relatorio"><i class="fas fa-chart-line"></i> Relatórios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="exportarBtn"><i class="fas fa-file-export"></i> Exportar</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <span class="badge rounded-pill bg-primary px-3 py-2">
+                            <i class="fas fa-box"></i> Material: <span id="materialId" class="fw-bold">{{ material_id }}</span>
+                        </span>
+                    </div>
+                    <h3 id="materialDesc" class="mb-0"></h3>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-success" id="salvarBtn">
+                    <i class="fas fa-save"></i> Salvar Análise
+                </button>
+                <button class="btn btn-accent ms-2" id="proximoBtn">
+                    <i class="fas fa-forward"></i> Próximo
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Painel de informações do material -->
+            <div class="col-md-5">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="fas fa-info-circle"></i> Informações do Material</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="material-property">
+                                    <div class="label">Código:</div>
+                                    <div class="value" id="infoMaterial"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="material-property">
+                                    <div class="label">Grupo MRP:</div>
+                                    <div class="value" id="infoGrupoMRP"></div>
+                                </div>
+                                
+                                <div class="material-property">
+                                    <div class="label">Tipo MRP:</div>
+                                    <div class="value" id="infoTipoMRP"></div>
+                                </div>
+                                
+                                <div class="material-property">
+                                    <div class="label">Grupo de Mercadorias:</div>
+                                    <div class="value" id="infoGrupoMercadorias"></div>
+                                </div>
+                                
+                                <div class="material-property">
+                                    <div class="label">Classificação:</div>
+                                    <div class="value" id="infoClassificacao"></div>
+                                </div>
+                                
+                                <div class="material-property">
+                                    <div class="label">TMD:</div>
+                                    <div class="value" id="infoTMD"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="material-property">
+                                    <div class="label">Estoque Total:</div>
+                                    <div class="value" id="infoEstoqueTotal"></div>
+                                </div>
+                                
+                                <div class="material-property">
+                                    <div class="label">Ponto Reabastec.:</div>
+                                    <div class="value" id="infoPontoReabastec"></div>
+                                </div>
+                                
+                                <div class="material-property">
+                                    <div class="label">Estoque Máximo:</div>
+                                    <div class="value" id="infoEstoqueMaximo"></div>
+                                </div>
+                                
+                                <div class="material-property">
+                                    <div class="label">Preço Unit.:</div>
+                                    <div class="value" id="infoPrecoUnit"></div>
+                                </div>
+                                
+                                <div class="material-property">
+                                    <div class="label">Saldo Virtual:</div>
+                                    <div class="value" id="infoSaldoVirtual"></div>
+                                </div>
+                                
+                                <div class="material-property">
+                                    <div class="label">Qtd. Ordem Planejada:</div>
+                                    <div class="value" id="infoQtdOrdemPlanejada"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="fas fa-file-alt"></i> Textos</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-language"></i> Português</h6>
+                                <div id="textoPT" class="border rounded p-2" style="min-height: 100px;"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-language"></i> Espanhol</h6>
+                                <div id="textoES" class="border rounded p-2" style="min-height: 100px;"></div>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" id="validarTextoBtn">
+                            <i class="fas fa-check-double"></i> Validar Textos
+                        </button>
+                        <div id="validacaoResultado" class="mt-2 d-none alert alert-info"></div>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="fas fa-clipboard-list"></i> Reservas</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover" id="reservasTable">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-hashtag"></i> Nº Reserva</th>
+                                        <th><i class="fas fa-calendar-alt"></i> Data</th>
+                                        <th><i class="fas fa-clipboard"></i> Motivo</th>
+                                        <th><i class="fas fa-sort-amount-down"></i> Quantidade</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reservasTableBody">
+                                    <!-- Preenchido via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Painel de análise -->
+            <div class="col-md-7">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="fas fa-robot"></i> Análise e Sugestões</h5>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-accent mb-3" id="gerarSugestoesBtn">
+                            <i class="fas fa-magic"></i> Gerar Sugestões
+                        </button>
+                        
+                        <div id="sugestoesContainer" class="d-none">
+                            <h6><i class="fas fa-lightbulb"></i> Sugestões para o Analista:</h6>
+                            <ul id="sugestoesList" class="list-group mb-3">
+                                <!-- Preenchido via JavaScript -->
+                            </ul>
+                            
+                            <h6><i class="fas fa-tag"></i> Política Sugerida:</h6>
+                            <p id="politicaSugerida" class="mb-3 fw-bold"></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="fas fa-search-dollar"></i> Pesquisa de Mercado</h5>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-outline-primary mb-3" id="pesquisarMercadoBtn">
+                            <i class="fas fa-search"></i> Pesquisar Mercado
+                        </button>
+                        <div id="spinnerPesquisa" class="d-none text-center">
+                            <div class="loader-container">
+                                <i class="fas fa-sync-alt loader-icon"></i>
+                                <p>Realizando pesquisa de mercado...</p>
+                            </div>
+                        </div>
+                        <div id="pesquisaResultado" class="d-none">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6><i class="fas fa-chart-bar"></i> Resultado da Pesquisa:</h6>
+                                    <dl class="row">
+                                        <dt class="col-sm-5">Referência atende:</dt>
+                                        <dd class="col-sm-7" id="pesquisaReferenciaAtende"></dd>
+                                        
+                                        <dt class="col-sm-5">Disponível no mercado:</dt>
+                                        <dd class="col-sm-7" id="pesquisaDisponivel"></dd>
+                                        
+                                        <dt class="col-sm-5">Preço estimado adequado:</dt>
+                                        <dd class="col-sm-7" id="pesquisaPrecoAdequado"></dd>
+                                        
+                                        <dt class="col-sm-5">Preço mercado:</dt>
+                                        <dd class="col-sm-7" id="pesquisaPrecoMercado"></dd>
+                                    </dl>
+                                    
+                                    <h6><i class="fas fa-tags"></i> Referências sugeridas:</h6>
+                                    <ul id="pesquisaReferencias" class="list-group mb-3">
+                                        <!-- Preenchido via JavaScript -->
+                                    </ul>
+                                    
+                                    <h6><i class="fas fa-comment-alt"></i> Observações:</h6>
+                                    <p id="pesquisaObservacoes"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="fas fa-clipboard-check"></i> Decisão do Analista</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="decisaoSelect" class="form-label">Decisão:</label>
+                            <select class="form-select" id="decisaoSelect">
+                                <option value="" selected>Selecione uma decisão</option>
+                                <option value="Repor">Repor</option>
+                                <option value="Não Repor">Não Repor</option>
+                                <option value="Aguardar">Aguardar informações</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="observacoesTextarea" class="form-label">Observações:</label>
+                            <textarea class="form-control" id="observacoesTextarea" rows="4"></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <button class="btn btn-outline-primary w-100" id="templateCotacaoBtn">
+                                    <i class="fas fa-envelope"></i> Template Cotação
+                                </button>
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-outline-warning w-100" id="templateFracassadoBtn">
+                                    <i class="fas fa-exclamation-triangle"></i> Template Material Fracassado
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Template -->
+    <div class="modal fade" id="templateModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="templateTitle">Template</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea class="form-control" id="templateContent" rows="10" readonly></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" id="copyTemplateBtn">Copiar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de carregamento -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="loader-container">
+                        <i class="fas fa-truck-loading loader-icon"></i>
+                        <h5 id="loadingMessage">Processando, por favor aguarde...</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Alerta -->
+    <div class="modal fade" id="alertModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertTitle">Alerta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="alertMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+</body>
+</html>
