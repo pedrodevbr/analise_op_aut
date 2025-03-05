@@ -399,5 +399,99 @@ def get_relatorio():
         }
     })
 
+@app.route('/grafico-ltd/<material_id>', methods=['GET'])
+def api_grafico_ltd(material_id):
+    """
+    Endpoint da API para obter dados do gráfico LTD para um material específico
+    Lê os dados diretamente do sistema e cria um gráfico com LTDs como barras e linhas para estoque máximo e ponto de reabastecimento
+    
+    Args:
+        material_id (str): Código do material
+        
+    Returns:
+        dict: Resposta JSON com os dados do gráfico
+    """
+    try:
+        app.logger.info(f"Requisição recebida para gráfico LTD do material: {material_id}")
+        
+        # Obter dados do material através do data_processor
+        dados_material = data_processor.obter_material(material_id)
+        
+        if not dados_material:
+            return jsonify({
+                'success': False,
+                'message': f'Material {material_id} não encontrado',
+                'data': None
+            }), 404
+        
+        # Extrair os valores de LTD do dicionário
+        # Os LTDs estão no formato "1 LTD", "2 LTD", etc.
+        ltd_keys = sorted([k for k in dados_material.keys() if k.endswith('LTD')], 
+                         key=lambda x: int(x.split()[0]))  # Ordenar por número
+        
+        labels = [k.split()[0] for k in ltd_keys]  # Extrair apenas o número do LTD para o label
+        valores = [dados_material[k] for k in ltd_keys]  # Valores dos LTDs
+        
+        # Obter valores fixos para as linhas
+        estoque_maximo = dados_material.get("Estoque máximo", 0)
+        ponto_reabastecimento = dados_material.get("Ponto reabastec.", 0)
+        
+        # Calcular a média dos LTDs para referência
+        media_ltd = round(sum(valores) / len(valores), 2) if valores else 0
+        
+        # Determinar a tendência com base nos valores
+        # Comparando o primeiro terço com o último terço dos valores
+        if len(valores) >= 3:
+            primeiro_terco = sum(valores[:len(valores)//3]) / (len(valores)//3)
+            ultimo_terco = sum(valores[-len(valores)//3:]) / (len(valores)//3)
+            
+            if ultimo_terco > primeiro_terco * 1.1:  # 10% maior
+                tendencia_texto = 'crescente'
+            elif primeiro_terco > ultimo_terco * 1.1:  # 10% maior
+                tendencia_texto = 'decrescente'
+            else:
+                tendencia_texto = 'estavel'
+        else:
+            tendencia_texto = 'estavel'
+        
+        # Criar o objeto de dados para o gráfico
+        dados_grafico = {
+            'labels': labels,
+            'valores': valores,
+            'media': media_ltd,
+            'tendencia': tendencia_texto,
+            'estoque_maximo': estoque_maximo,
+            'ponto_reabastecimento': ponto_reabastecimento,
+            'info_material': {
+                'codigo': material_id,
+                'descricao': dados_material.get('Material', ''),
+                'fornecedor': dados_material.get('Fornecedor', ''),
+                'nome_fornecedor': dados_material.get('Nome', ''),
+                'grupo_mercadorias': dados_material.get('Grupo de mercadorias', ''),
+                'grupo_mrp': dados_material.get('Grupo MRP', ''),
+                'planejador_mrp': dados_material.get('Planejador MRP', ''),
+                'estoque_total': dados_material.get('Estoque total', 0),
+            }
+        }
+        
+        app.logger.info(f"Dados do gráfico LTD gerados com sucesso para o material {material_id}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Dados do gráfico LTD gerados com sucesso',
+            'data': dados_grafico
+        })
+        
+    except Exception as e:
+        import traceback
+        app.logger.error(f"Erro ao gerar dados do gráfico LTD: {str(e)}")
+        app.logger.error(traceback.format_exc())
+        
+        return jsonify({
+            'success': False,
+            'message': f'Erro ao processar solicitação: {str(e)}',
+            'data': None
+        }), 500
+    
 if __name__ == '__main__':
     app.run(debug=True)

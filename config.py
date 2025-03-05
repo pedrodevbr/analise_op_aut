@@ -10,6 +10,7 @@ class Config:
     
     # Configurações para API do Anthropic (Claude)
     ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
+    PERPLEXITY_API_KEY = os.environ.get('PERPLEXITY_API_KEY')
     
     # Configurações gerais da aplicação
     UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')

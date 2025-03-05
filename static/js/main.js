@@ -592,3 +592,264 @@ function exportarRelatorio() {
         }
     });
 }
+
+// Função para carregar material e seus dados associados
+function carregarMaterial(materialId) {
+    // Mostrar modal de carregamento
+    $('#loadingModal').modal('show');
+    $('#loadingMessage').text('Carregando dados do material...');
+    
+    // Fazer requisição AJAX para obter dados do material
+    $.ajax({
+        url: `/material/${materialId}`,
+        method: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                // Preencher os dados do material na interface
+                preencherDadosMaterial(response.data);
+                
+                // Carregar o gráfico LTD
+                carregarDadosGraficoLTD(materialId);
+                
+                // Esconder modal de carregamento
+                $('#loadingModal').modal('hide');
+            } else {
+                // Mostrar erro
+                $('#loadingModal').modal('hide');
+                mostrarAlerta('Erro', response.message || 'Erro ao carregar dados do material');
+            }
+        },
+        error: function() {
+            $('#loadingModal').modal('hide');
+            mostrarAlerta('Erro', 'Falha na comunicação com o servidor');
+        }
+    });
+}
+
+// Função revisada para inicializar o gráfico LTD com log de debug
+function initLTDChart() {
+    console.log("Inicializando gráfico LTD");
+    
+    // Verifica se o elemento do canvas existe
+    const chartCanvas = document.getElementById('ltdChartCanvas');
+    if (!chartCanvas) {
+        console.error("Elemento ltdChartCanvas não encontrado no DOM");
+        return;
+    }
+    
+    console.log("Canvas encontrado, criando objeto Chart");
+    
+    try {
+        // Inicializa o gráfico vazio
+        window.ltdChart = new Chart(chartCanvas, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Consumo LTD',
+                    data: [],
+                    borderColor: '#4361ee',
+                    backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3
+                }, {
+                    label: 'Média',
+                    data: [],
+                    borderColor: '#f72585',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Quantidade'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Período'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.raw.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        console.log("Gráfico inicializado com sucesso");
+    } catch (error) {
+        console.error("Erro ao inicializar o gráfico:", error);
+    }
+}
+
+// Função revisada para atualizar o gráfico LTD com dados de um material
+function updateLTDChart(chartData) {
+    console.log("Atualizando gráfico LTD com dados:", chartData);
+    
+    if (!window.ltdChart) {
+        console.error("Objeto ltdChart não está inicializado");
+        return;
+    }
+    
+    if (!chartData) {
+        console.error("Dados do gráfico não fornecidos");
+        return;
+    }
+    
+    try {
+        // Atualizar labels e dados do gráfico
+        window.ltdChart.data.labels = chartData.labels;
+        window.ltdChart.data.datasets[0].data = chartData.valores;
+        
+        // Criar array com a média para todos os pontos
+        const mediaArray = chartData.labels.map(() => chartData.media);
+        window.ltdChart.data.datasets[1].data = mediaArray;
+        
+        // Atualizar o gráfico
+        window.ltdChart.update();
+        console.log("Gráfico atualizado com sucesso");
+        
+        // Exibir informação sobre a tendência
+        const tendenciaEl = document.getElementById('ltdTendencia');
+        if (tendenciaEl) {
+            let tendenciaClass = 'text-info';
+            let tendenciaIcon = 'fa-equals';
+            
+            if (chartData.tendencia === 'crescente') {
+                tendenciaClass = 'text-success';
+                tendenciaIcon = 'fa-arrow-trend-up';
+            } else if (chartData.tendencia === 'decrescente') {
+                tendenciaClass = 'text-danger';
+                tendenciaIcon = 'fa-arrow-trend-down';
+            }
+            
+            tendenciaEl.className = tendenciaClass;
+            tendenciaEl.innerHTML = `<i class="fas ${tendenciaIcon}"></i> Tendência: ${chartData.tendencia.charAt(0).toUpperCase() + chartData.tendencia.slice(1)}`;
+        } else {
+            console.warn("Elemento ltdTendencia não encontrado");
+        }
+    } catch (error) {
+        console.error("Erro ao atualizar o gráfico:", error);
+    }
+}
+
+// Código revisado para carregar os dados do gráfico quando um material é selecionado
+function carregarDadosGraficoLTD(materialId) {
+    console.log("Carregando dados do gráfico LTD para material:", materialId);
+    
+    if (!materialId) {
+        console.error("ID do material não fornecido");
+        return;
+    }
+    
+    // Mostrar indicador de carregamento
+    const ltdChartContainer = document.getElementById('ltdChartContainer');
+    if (!ltdChartContainer) {
+        console.error("Container do gráfico LTD não encontrado");
+        return;
+    }
+    
+    ltdChartContainer.innerHTML = '<div class="text-center my-4"><i class="fas fa-spinner fa-spin"></i> Carregando dados do gráfico...</div>';
+    
+    // Fazer requisição AJAX para obter dados do gráfico
+    console.log("Enviando requisição AJAX para:", `/api/grafico-ltd/${materialId}`);
+    
+    $.ajax({
+        url: `/api/grafico-ltd/${materialId}`,
+        method: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            console.log("Resposta da API recebida:", response);
+            
+            if (response.success && response.data) {
+                // Restaurar o container do gráfico
+                ltdChartContainer.innerHTML = '<canvas id="ltdChartCanvas" style="height: 300px;"></canvas><div id="ltdTendencia" class="text-center mt-2"></div>';
+                
+                // Inicializar e atualizar o gráfico
+                initLTDChart();
+                updateLTDChart(response.data);
+            } else {
+                console.warn("API retornou erro ou sem dados:", response.message);
+                ltdChartContainer.innerHTML = `<div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    Não foi possível carregar os dados de consumo LTD para este material.
+                    <br><small>${response.message || 'Sem mensagem de erro'}</small>
+                </div>`;
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Erro na requisição AJAX:", error);
+            console.error("Status:", status);
+            console.error("Resposta:", xhr.responseText);
+            
+            ltdChartContainer.innerHTML = `<div class="alert alert-danger">
+                <i class="fas fa-times-circle"></i> 
+                Erro ao carregar dados do gráfico. Tente novamente mais tarde.
+                <br><small>Erro: ${error}</small>
+            </div>`;
+        }
+    });
+}
+
+// Garantir que a função de carregamento seja chamada quando o documento estiver pronto
+$(document).ready(function() {
+    console.log("Document ready, configurando eventos para o gráfico LTD");
+    
+    // Obter o ID do material atual da página
+    const materialId = document.getElementById('materialId')?.textContent?.trim();
+    console.log("Material ID atual:", materialId);
+    
+    if (materialId) {
+        // Carregar dados do gráfico para o material atual
+        carregarDadosGraficoLTD(materialId);
+    } else {
+        console.warn("ID do material não encontrado na página");
+    }
+    
+    // Certificar-se de que o carregamento do gráfico seja chamado quando um novo material for carregado
+    // Isso depende de como sua aplicação carrega novos materiais
+    const proximoBtn = document.getElementById('proximoBtn');
+    if (proximoBtn) {
+        console.log("Botão 'Próximo' encontrado, adicionando manipulador de evento");
+        
+        // Preservar qualquer manipulador de evento existente
+        const originalOnClick = proximoBtn.onclick;
+        
+        proximoBtn.onclick = function(event) {
+            // Chamar o manipulador original primeiro (se existir)
+            if (originalOnClick) {
+                originalOnClick.call(this, event);
+            }
+            
+            // Depois que o novo material for carregado, buscaremos seu ID e carregaremos o gráfico
+            setTimeout(function() {
+                const novoMaterialId = document.getElementById('materialId')?.textContent?.trim();
+                console.log("Novo material carregado:", novoMaterialId);
+                
+                if (novoMaterialId) {
+                    carregarDadosGraficoLTD(novoMaterialId);
+                }
+            }, 100); // Esperar 1 segundo para o novo material ser carregado
+        };
+    }
+});

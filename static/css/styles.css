@@ -340,3 +340,73 @@ h2, h3, h4, h5 {
         font-size: 1.5rem;
     }
 }
+
+/* Estilos para expandir o gráfico LTD para largura total */
+
+/* Ajuste no container do card para largura total */
+.card-body {
+    padding: 15px 5px;  /* Reduzir padding horizontal para maximizar espaço */
+}
+
+/* Expandir o container do gráfico para largura completa */
+#ltdChartContainer {
+    position: relative;
+    height: 300px;
+    max-height: 300px;
+    overflow: visible;
+    width: 100% !important;  /* Força largura total */
+    margin: 0 !important;    /* Remove margens */
+    padding: 0 !important;   /* Remove padding */
+}
+
+/* Garantir que o canvas ocupe todo o espaço disponível */
+#ltdChartCanvas {
+    max-height: 100%;
+    width: 100% !important;
+    max-width: none !important;
+}
+
+/* Ajustar o container da tendência para largura total */
+#ltdTendencia {
+    width: auto;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+/* Ajustes na legenda para ocupar toda a largura */
+#ltdLegendaInfo {
+    width: 100% !important;
+    margin: 15px 0 0 0 !important;
+    box-sizing: border-box;
+}
+
+/* Ajustar o card para maximizar o espaço */
+.card.mb-3 {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+}
+
+/* Para garantir que o título e outras informações também se estendam */
+.card-header {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* Remover possíveis limitações de largura */
+.container-fluid {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.row {
+    margin-left: -5px;
+    margin-right: -5px;
+}
+
+.col-md-5, .col-md-7 {
+    padding-left: 5px;
+    padding-right: 5px;
+}

@@ -58,17 +58,23 @@ class DataProcessor:
         self.LT_COLUMNS = [f'{i} LTD' for i in range(1, 16)]
         self.DEMAND_WINDOW = 3  # Anos para janela de demanda
         
-    def carregar_dados(self, file_paths):
+    def carregar_dados(self, file_paths, use_mock=False):
         """
-        Carrega os dados das planilhas
+        Carrega os dados das planilhas ou usa dados mockup para desenvolvimento
         
         Args:
             file_paths (dict): Dicionário com os caminhos dos arquivos
+            use_mock (bool): Se True, usa dados mockup ao invés de carregar arquivos
         
         Returns:
             bool: True se os dados foram carregados com sucesso, False caso contrário
         """
         try:
+            if use_mock:
+                print("Usando dados mockup para desenvolvimento")
+                self._carregar_dados_mockup()
+                return True
+                
             # Carregar cada planilha se o caminho estiver definido
             if 'op' in file_paths and file_paths['op']:
                 print(f"Carregando arquivo OP: {file_paths['op']}")
@@ -131,7 +137,119 @@ class DataProcessor:
             import traceback
             traceback.print_exc()
             return False
-    
+            
+    def _carregar_dados_mockup(self):
+        """
+        Cria dados mockup para desenvolvimento sem necessidade de arquivos externos
+        """
+        import pandas as pd
+        import numpy as np
+        import datetime
+        
+        # Mock para OP data
+        self.op_data = pd.DataFrame({
+            "Data abertura plan.": [datetime.datetime.now() - datetime.timedelta(days=i*30) for i in range(10)],
+            "Material": [f"MAT{i:06d}" for i in range(1, 11)],
+            "Txt.brv.material": [f"Material de teste {i}" for i in range(1, 11)],
+            "Grupo de mercadorias": np.random.choice(['GM001', 'GM002', 'GM003'], 10),
+            "Setor de atividade": np.random.choice(['SA01', 'SA02', 'SA03'], 10),
+            "Nº peça fabricante": [f"PF{i:05d}" for i in range(1, 11)],
+            "Planejador MRP": np.random.choice(['P001', 'P002', 'P003'], 10),
+            "Grupo MRP": np.random.choice(['GMRP1', 'GMRP2'], 10),
+            "Tipo de MRP": np.random.choice(['ND', 'PD', 'VB'], 10),
+            "Prz.entrg.prev.": np.random.randint(1, 30, 10),
+            "Estoque total": np.random.randint(0, 1000, 10),
+            "Ponto reabastec.": np.random.randint(10, 100, 10),
+            "Estoque máximo": np.random.randint(100, 2000, 10),
+            "Estoque de segurança": np.random.randint(5, 50, 10),
+            "Valor total": np.random.uniform(1000, 50000, 10),
+            "CMM": np.random.randint(1, 100, 10),
+            "Demanda": np.random.randint(0, 200, 10),
+            "Demanda Med.": np.random.uniform(10, 150, 10),
+            "Preço Unit.": np.random.uniform(10, 500, 10),
+            "Qtd. RTP1": np.random.randint(0, 10, 10),
+            "Qtd. RTP2": np.random.randint(0, 10, 10),
+            "Qtd. RTP3": np.random.randint(0, 10, 10),
+            "Qtd. RTP6": np.random.randint(0, 10, 10),
+            "Sld. Virtual": np.random.randint(-50, 100, 10),
+            "Qtd.ordem planejada": np.random.randint(0, 200, 10),
+            "Valor Total": np.random.uniform(1000, 50000, 10),
+            "Responsável": [f"RESP{i:02d}" for i in range(1, 11)],
+            "Criticidade": np.random.choice(['Alta', 'Média', 'Baixa'], 10),
+            "Qtd. LMR": np.random.randint(0, 50, 10),
+            "Dem. Pro.": np.random.randint(0, 100, 10),
+            "Dt. Ult. Pedido": [datetime.datetime.now() - datetime.timedelta(days=i*15) for i in range(10)],
+            "Fornecedor": [f"FORN{i:03d}" for i in range(1, 11)],
+            "Nome": [f"Fornecedor Nome {i}" for i in range(1, 11)],
+            "Dt. Ult. Requisição": [datetime.datetime.now() - datetime.timedelta(days=i*7) for i in range(10)],
+            "Qtd. Pedido": np.random.randint(0, 50, 10),
+            "Qtd. Requisição": np.random.randint(0, 30, 10),
+            "Qtd. RemCG": np.random.randint(0, 20, 10),
+            "Dt. Ult. 201": [datetime.datetime.now() - datetime.timedelta(days=i*45) for i in range(10)],
+            "Qt. 201 - 12 Meses": np.random.randint(0, 100, 10)
+        })
+        
+        # Mock para INFO data
+        self.info_data = pd.DataFrame({
+            "Material": [f"MAT{i:06d}" for i in range(1, 11)],
+            "Volume": np.random.uniform(0.1, 10, 10)
+        })
+        
+        # Mock para CONSUMO data
+        self.consumo_data = pd.DataFrame({
+            "Material": [f"MAT{i:06d}" for i in range(1, 11)]
+        })
+        
+        # Adicionar colunas LTD
+        for i in range(1, 16):
+            self.consumo_data[f"{i} LTD"] = np.random.randint(0, 50, 10)
+        
+        # Mock para TEXTOS data
+        self.textos_data = pd.DataFrame({
+            "Material": [f"MAT{i:06d}" for i in range(1, 11)],
+            "Texto OBS - pt": [f"Observação em português {i}" for i in range(1, 11)],
+            "Texto OBS - es": [f"Observación en español {i}" for i in range(1, 11)],
+            "Texto DB - pt": [f"Texto DB em português {i}" for i in range(1, 11)],
+            "Texto DB - es": [f"Texto DB en español {i}" for i in range(1, 11)],
+            "Texto - pt": [f"Texto em português {i}" for i in range(1, 11)],
+            "Texto - es": [f"Texto en español {i}" for i in range(1, 11)],
+            "Texto REF LMR": [f"Referência LMR {i}" for i in range(1, 11)]
+        })
+        
+        # Mock para RESERVAS data
+        self.reservas_data = pd.DataFrame({
+            "Material": np.random.choice([f"MAT{i:06d}" for i in range(1, 11)], 20),
+            "Tipo de reserva": np.random.choice(['TR01', 'TR02', 'TR03'], 20),
+            "Centro custo": np.random.choice(['CC001', 'CC002', 'CC003'], 20),
+            "Data base": [datetime.datetime.now() - datetime.timedelta(days=i*3) for i in range(20)],
+            "Nome do usuário": np.random.choice(['User01', 'User02', 'User03', 'User04'], 20),
+            "Cód. Localização": np.random.choice(['LOC01', 'LOC02', 'LOC03'], 20),
+            "Descrição do Equipamento": [f"Equipamento {i}" for i in range(1, 21)],
+            "Texto": [f"Descrição da reserva {i}" for i in range(1, 21)],
+            "Com registro final": np.random.choice([True, False], 20),
+            "Item foi eliminado": np.random.choice([True, False], 20, p=[0.1, 0.9]),
+            "Motivo da Reserva": [f"Motivo {i}" for i in range(1, 21)],
+            "Qtd.retirada": np.random.randint(1, 10, 20)
+        })
+        
+        # Mock para MOVIMENTAÇÃO data
+        self.movimentacao_data = pd.DataFrame({
+            "Material": np.random.choice([f"MAT{i:06d}" for i in range(1, 11)], 30),
+            "Data Movimento": [datetime.datetime.now() - datetime.timedelta(days=i*2) for i in range(30)],
+            "Tipo Movimento": np.random.choice(['Entrada', 'Saída'], 30),
+            "Quantidade": np.random.randint(1, 50, 30),
+            "Usuário": np.random.choice(['User01', 'User02', 'User03', 'User04'], 30),
+            "Destino": [f"Destino {i}" for i in range(1, 31)]
+        })
+        
+        print("Dados mockup criados com sucesso")
+        print(f"OP mockup: {len(self.op_data)} linhas")
+        print(f"INFO mockup: {len(self.info_data)} linhas")
+        print(f"CONSUMO mockup: {len(self.consumo_data)} linhas")
+        print(f"TEXTOS mockup: {len(self.textos_data)} linhas")
+        print(f"RESERVAS mockup: {len(self.reservas_data)} linhas")
+        print(f"MOVIMENTAÇÃO mockup: {len(self.movimentacao_data)} linhas")
+        
     def processar_dados(self):
         """
         Processa os dados carregados
@@ -289,8 +407,7 @@ class DataProcessor:
         if self.textos_data is not None:
             texto_cols = ['Texto OBS - pt','Texto OBS - es','Texto DB - pt',
                           'Texto DB - es','Texto - pt','Texto - es','Texto REF LMR']
-            textos_agrupados = self.textos_data.groupby('Material')[texto_cols]\
-                .agg(lambda x: '\n'.join(x.dropna().astype(str))).reset_index()
+            textos_agrupados = self.textos_data.groupby('Material')[texto_cols].agg(lambda x: '\n'.join(x.dropna().astype(str))).reset_index()
             merged_data = pd.merge(merged_data, textos_agrupados, on='Material', how='left', suffixes=('', '_texto'))
 
         return merged_data
@@ -466,3 +583,4 @@ class DataProcessor:
             materiais.append(material_dict)
             
         return materiais
+
