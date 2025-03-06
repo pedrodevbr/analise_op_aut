@@ -233,7 +233,11 @@ function preencherDadosMaterial(material) {
     $('#infoTipoMRP').text(material['Tipo de MRP'] || '');
     $('#infoGrupoMercadorias').text(material['Grupo de mercadorias'] || '');
     $('#infoClassificacao').text(material['Classificacao'] || '');
-    
+    $('#infoRTP1').text(material['Qtd. RTP1'] || '0');
+    $('#infoRTP2').text(material['Qtd. RTP2'] || '0');
+    $('#infoRTP3').text(material['Qtd. RTP3'] || '0');
+    $('#infoRTP6').text(material['Qtd. RTP6'] || '0');
+
     $('#infoEstoqueTotal').text(material['Estoque total'] || '0');
     $('#infoPontoReabastec').text(material['Ponto reabastec.'] || '0');
     $('#infoEstoqueMaximo').text(material['Estoque máximo'] || '0');
@@ -260,10 +264,12 @@ function preencherDadosMaterial(material) {
         material['reservas'].forEach(function(reserva) {
             $('#reservasTableBody').append(`
                 <tr>
-                    <td>${reserva['Nº reserva'] || ''}</td>
+                    <td>${reserva['Nome do usuário'] || ''}</td>
                     <td>${formatDate(reserva['Data base'])}</td>
                     <td>${reserva['Motivo da Reserva'] || ''}</td>
-                    <td>${reserva['Quantidade necessária total'] || '0'}</td>
+                    <td>${reserva['Qtd.retirada'] || '0'}</td>
+                    <td>${reserva['Descrição do Equipamento'] || '0'}</td>
+                    
                 </tr>
             `);
         });

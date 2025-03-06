@@ -58,7 +58,8 @@ class DataProcessor:
         self.LT_COLUMNS = [f'{i} LTD' for i in range(1, 16)]
         self.DEMAND_WINDOW = 3  # Anos para janela de demanda
         
-    def carregar_dados(self, file_paths, use_mock=False):
+
+    def carregar_dados(self, file_paths, use_mock=True):
         """
         Carrega os dados das planilhas ou usa dados mockup para desenvolvimento
         
@@ -293,6 +294,7 @@ class DataProcessor:
         # Converter coluna Material para string em todos os DataFrames
         if self.op_data is not None:
             self.op_data['Material'] = self.op_data['Material'].astype(str)
+            self.op_data['Preço Unit.'] = self.op_data['Preço Unit.'].round(0)
             
         if self.info_data is not None:
             self.info_data['Material'] = self.info_data['Material'].astype(str)

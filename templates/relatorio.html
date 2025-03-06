@@ -1,535 +1,356 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatório de Análise</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- DataTables CSS -->
-    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório de Análise</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <!-- DataTables CSS -->
+  <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark bg-primary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">Automação de Requisições</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Início</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#"><i class="fas fa-file-alt"></i> Relatório</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+  <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">Automação de Requisições</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/"><i class="fas fa-home"></i> Início</a></li>
+          <li class="nav-item"><a class="nav-link active" href="#"><i class="fas fa-file-alt"></i> Relatório</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-    <div class="container-fluid mt-4">
-        <div class="row mb-4">
-            <div class="col-md-8">
-                <h2><i class="fas fa-chart-line"></i> Relatório de Análise</h2>
-                <p class="text-muted">Resumo das análises de requisições de materiais</p>
-            </div>
-            <div class="col-md-4 text-end">
-                <button class="btn btn-success" id="exportExcelBtn">
-                    <i class="fas fa-file-excel"></i> Exportar para Excel
-                </button>
-                <button class="btn btn-primary ms-2" id="printReportBtn">
-                    <i class="fas fa-print"></i> Imprimir
-                </button>
-            </div>
-        </div>
+  <div class="container-fluid mt-4">
+    <!-- Cabeçalho e cartões de resumo -->
+    <div class="row mb-4">
+      <div class="col-md-8">
+        <h2><i class="fas fa-chart-line"></i> Relatório de Análise</h2>
+        <p class="text-muted">Resumo das análises de requisições de materiais</p>
+      </div>
+      <div class="col-md-4 text-end">
+        <button class="btn btn-success" id="exportExcelBtn">
+          <i class="fas fa-file-excel"></i> Exportar para Excel
+        </button>
+        <button class="btn btn-primary ms-2" id="printReportBtn">
+          <i class="fas fa-print"></i> Imprimir
+        </button>
+      </div>
+    </div>
 
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Total de Materiais</h5>
-                        <h2 id="totalMateriais">0</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Decisão: Repor</h5>
-                        <h2 id="totalRepor" class="text-success">0</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Decisão: Não Repor</h5>
-                        <h2 id="totalNaoRepor" class="text-danger">0</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Aguardando</h5>
-                        <h2 id="totalAguardando" class="text-warning">0</h2>
-                    </div>
-                </div>
-            </div>
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-title">Total de Materiais</h5>
+            <h2 id="totalMateriais">0</h2>
+          </div>
         </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-title">Decisão: Repor</h5>
+            <h2 id="totalRepor" class="text-success">0</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-title">Decisão: Não Repor</h5>
+            <h2 id="totalNaoRepor" class="text-danger">0</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-title">Aguardando</h5>
+            <h2 id="totalAguardando" class="text-warning">0</h2>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <div class="row mb-4">
+    <!-- Tabela de Materiais -->
+    <div class="row mb-4">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Lista de Materiais Analisados</h5>
+            <div>
+              <input type="text" id="filtroGlobal" class="form-control form-control-sm" placeholder="Filtrar">
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover" id="relatorioTable">
+                <thead>
+                  <tr>
+                    <th>Material</th>
+                    <th>Descrição</th>
+                    <th>Grupo MRP</th>
+                    <th>Tipo MRP</th>
+                    <th>Classificação</th>
+                    <th>Política Sugerida</th>
+                    <th>Decisão</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="relatorioTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Distribuição por Classificação</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="classificacaoChart" height="300"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Distribuição por Decisão</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="decisaoChart" height="300"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Detalhes -->
+  <div class="modal fade" id="detalhesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="detalhesTitle">Detalhes do Material</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Detalhes do material -->
+          <div class="row">
+            <div class="col-md-6">
+              <h6>Informações Básicas</h6>
+              <dl class="row">
+                <dt class="col-sm-4">Material:</dt>
+                <dd class="col-sm-8" id="detalheMaterial"></dd>
+                <dt class="col-sm-4">Descrição:</dt>
+                <dd class="col-sm-8" id="detalheDescricao"></dd>
+                <dt class="col-sm-4">Grupo MRP:</dt>
+                <dd class="col-sm-8" id="detalheGrupoMRP"></dd>
+                <dt class="col-sm-4">Tipo MRP:</dt>
+                <dd class="col-sm-8" id="detalheTipoMRP"></dd>
+                <dt class="col-sm-4">Classificação:</dt>
+                <dd class="col-sm-8" id="detalheClassificacao"></dd>
+                <dt class="col-sm-4">Política Sugerida:</dt>
+                <dd class="col-sm-8" id="detalhePoliticaSugerida"></dd>
+              </dl>
+            </div>
+            <div class="col-md-6">
+              <h6>Decisão do Analista</h6>
+              <dl class="row">
+                <dt class="col-sm-4">Decisão:</dt>
+                <dd class="col-sm-8" id="detalheDecisao"></dd>
+                <dt class="col-sm-4">Observações:</dt>
+                <dd class="col-sm-8" id="detalheObservacoes"></dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row mt-3">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Lista de Materiais Analisados</h5>
-                        <div>
-                            <input type="text" id="filtroGlobal" class="form-control form-control-sm" placeholder="Filtrar">
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover" id="relatorioTable">
-                                <thead>
-                                    <tr>
-                                        <th>Material</th>
-                                        <th>Descrição</th>
-                                        <th>Grupo MRP</th>
-                                        <th>Tipo MRP</th>
-                                        <th>Classificação</th>
-                                        <th>Política Sugerida</th>
-                                        <th>Decisão</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="relatorioTableBody">
-                                    <!-- Preenchido via JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+              <h6>Sugestões</h6>
+              <ul id="detalheSugestoes" class="list-group"></ul>
             </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <h6>Pesquisa de Mercado</h6>
+              <div id="detalhePesquisa"></div>
+            </div>
+          </div>
         </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">Distribuição por Classificação</h5>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="classificacaoChart" height="300"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">Distribuição por Decisão</h5>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="decisaoChart" height="300"></canvas>
-                    </div>
-                </div>
-            </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+          <a href="#" class="btn btn-primary" id="detalheVerAnaliseBotao">Ver Análise Completa</a>
         </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Modal de Detalhes -->
-    <div class="modal fade" id="detalhesModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="detalhesTitle">Detalhes do Material</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>Informações Básicas</h6>
-                            <dl class="row">
-                                <dt class="col-sm-4">Material:</dt>
-                                <dd class="col-sm-8" id="detalheMaterial"></dd>
-                                
-                                <dt class="col-sm-4">Descrição:</dt>
-                                <dd class="col-sm-8" id="detalheDescricao"></dd>
-                                
-                                <dt class="col-sm-4">Grupo MRP:</dt>
-                                <dd class="col-sm-8" id="detalheGrupoMRP"></dd>
-                                
-                                <dt class="col-sm-4">Tipo MRP:</dt>
-                                <dd class="col-sm-8" id="detalheTipoMRP"></dd>
-                                
-                                <dt class="col-sm-4">Classificação:</dt>
-                                <dd class="col-sm-8" id="detalheClassificacao"></dd>
-                                
-                                <dt class="col-sm-4">Política Sugerida:</dt>
-                                <dd class="col-sm-8" id="detalhePoliticaSugerida"></dd>
-                            </dl>
-                        </div>
-                        <div class="col-md-6">
-                            <h6>Decisão do Analista</h6>
-                            <dl class="row">
-                                <dt class="col-sm-4">Decisão:</dt>
-                                <dd class="col-sm-8" id="detalheDecisao"></dd>
-                                
-                                <dt class="col-sm-4">Observações:</dt>
-                                <dd class="col-sm-8" id="detalheObservacoes"></dd>
-                            </dl>
-                        </div>
-                    </div>
-                    
-                    <div class="row mt-3">
-                        <div class="col-md-12">
-                            <h6>Sugestões</h6>
-                            <ul id="detalheSugestoes" class="list-group">
-                                <!-- Preenchido via JavaScript -->
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <div class="row mt-3">
-                        <div class="col-md-12">
-                            <h6>Pesquisa de Mercado</h6>
-                            <div id="detalhePesquisa">
-                                <!-- Preenchido via JavaScript -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <a href="#" class="btn btn-primary" id="detalheVerAnaliseBotao">Ver Análise Completa</a>
-                </div>
-            </div>
+  <!-- Modal de Carregamento -->
+  <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <div class="spinner-border text-primary mb-3" role="status"></div>
+          <h5 id="loadingMessage">Carregando relatório, por favor aguarde...</h5>
         </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Modal de carregamento -->
-    <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body text-center">
-                    <div class="spinner-border text-primary mb-3" role="status"></div>
-                    <h5 id="loadingMessage">Carregando relatório, por favor aguarde...</h5>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Custom JS -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/exportar.js') }}"></script>
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/exportar.js') }}"></script>
+  <script>
+    $(document).ready(function(){
+      const table = $('#relatorioTable').DataTable({
+        language: { url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json' },
+        responsive: true,
+        dom: 'Bfrtip',
+        pageLength: 10
+      });
+      $('#filtroGlobal').on('keyup', function(){ table.search(this.value).draw(); });
+      carregarRelatorio();
+      $('#exportExcelBtn').on('click', exportarExcel);
+      $('#printReportBtn').on('click', ()=> window.print());
+    });
     
-    <script>
-        $(document).ready(function() {
-            // Inicializar DataTable
-            const table = $('#relatorioTable').DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json'
-                },
-                responsive: true,
-                dom: 'Bfrtip',
-                pageLength: 10
-            });
-            
-            // Filtro global
-            $('#filtroGlobal').on('keyup', function() {
-                table.search(this.value).draw();
-            });
-            
-            // Carregar dados do relatório
-            carregarRelatorio();
-            
-            // Botões de ações
-            $('#exportExcelBtn').on('click', exportarExcel);
-            $('#printReportBtn').on('click', function() {
-                window.print();
-            });
-        });
-        
-        function carregarRelatorio() {
-            // Aqui seria feita uma chamada AJAX para obter os dados do relatório
-            // Esta é uma implementação de exemplo
-            
-            const dadosExemplo = {
-                materiais: [
-                    {
-                        material: '100137',
-                        descricao: 'ANEL VED O-RING BUNA 70SH 12,5X377MM',
-                        grupoMRP: 'ZSTK',
-                        tipoMRP: 'ZM',
-                        classificacao: 'Esporádico',
-                        politicaSugerida: 'ZD',
-                        decisao: 'Não Repor',
-                        sugestoes: [
-                            'Política: Alterar para ZD',
-                            'Última compra a mais de 3 anos'
-                        ],
-                        pesquisa: {
-                            referencia_atende: true,
-                            disponivel_mercado: true,
-                            preco_estimado_adequado: false,
-                            preco_mercado: 'R$ 458,90',
-                            referencias_sugeridas: [
-                                'OR-377-12.5-N70 - Vedaflex',
-                                'OR12.5X377-N70 - Orion Vedações'
-                            ],
-                            observacoes: 'Preço estimado defasado. Material disponível no mercado com preços atualizados.'
-                        },
-                        observacoes: 'Material com baixo consumo e alto valor. Preferível comprar sob demanda.'
-                    },
-                    {
-                        material: '327905',
-                        descricao: 'ELETRODUTO RIG ACO/ZQ NPT 2"',
-                        grupoMRP: 'ZSTK',
-                        tipoMRP: 'ZP',
-                        classificacao: 'Suave',
-                        politicaSugerida: 'ZP',
-                        decisao: 'Repor',
-                        sugestoes: [
-                            'OP com alto volume, verificar parcelamento'
-                        ],
-                        pesquisa: {
-                            referencia_atende: true,
-                            disponivel_mercado: true,
-                            preco_estimado_adequado: true,
-                            preco_mercado: 'R$ 11,50',
-                            referencias_sugeridas: [],
-                            observacoes: 'Material com boa disponibilidade no mercado. Preço estimado adequado.'
-                        },
-                        observacoes: 'Repor conforme sugestão do sistema, verificando parcelamento.'
-                    }
-                ],
-                totais: {
-                    total: 2,
-                    repor: 1,
-                    naoRepor: 1,
-                    aguardando: 0
-                }
-            };
-            
-            // Atualizar contadores
-            $('#totalMateriais').text(dadosExemplo.totais.total);
-            $('#totalRepor').text(dadosExemplo.totais.repor);
-            $('#totalNaoRepor').text(dadosExemplo.totais.naoRepor);
-            $('#totalAguardando').text(dadosExemplo.totais.aguardando);
-            
-            // Preencher tabela
-            const tabela = $('#relatorioTable').DataTable();
-            tabela.clear();
-            
-            dadosExemplo.materiais.forEach(function(material) {
-                const decisaoClass = material.decisao === 'Repor' ? 'success' : 
-                                    (material.decisao === 'Não Repor' ? 'danger' : 'warning');
-                
-                tabela.row.add([
-                    material.material,
-                    material.descricao,
-                    material.grupoMRP,
-                    material.tipoMRP,
-                    material.classificacao,
-                    material.politicaSugerida,
-                    `<span class="badge bg-${decisaoClass}">${material.decisao}</span>`,
-                    `<button class="btn btn-sm btn-primary detalhar-btn" data-material="${material.material}">
-                        <i class="fas fa-search"></i> Detalhes
-                     </button>
-                     <a href="/analisar/${material.material}" class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-edit"></i> Análise
-                     </a>`
-                ]).draw(false);
-            });
-            
-            // Adicionar evento de clique para botões de detalhe
-            $('.detalhar-btn').on('click', function() {
-                const materialId = $(this).data('material');
-                const material = dadosExemplo.materiais.find(m => m.material === materialId);
-                
-                if (material) {
-                    mostrarDetalhes(material);
-                }
-            });
-            
-            // Criar gráficos
-            criarGraficoClassificacao(dadosExemplo.materiais);
-            criarGraficoDecisao(dadosExemplo.materiais);
+    function carregarRelatorio(){
+      $.ajax({
+         url: '/api/relatorio',  // Endpoint que retorna os dados reais
+         method: 'GET',
+         dataType: 'json',
+         success: function(dados){
+           // Atualiza os contadores
+           $('#totalMateriais').text(dados.totais.total);
+           $('#totalRepor').text(dados.totais.repor);
+           $('#totalNaoRepor').text(dados.totais.naoRepor);
+           $('#totalAguardando').text(dados.totais.aguardando);
+
+           const tabela = $('#relatorioTable').DataTable();
+           tabela.clear();
+
+           dados.materiais.forEach(function(material){
+             const decisaoClass = material.decisao==='Repor' ? 'success' :
+                                   (material.decisao==='Não Repor' ? 'danger' : 'warning');
+             tabela.row.add([
+               material.material,
+               material.descricao,
+               material.grupoMRP,
+               material.tipoMRP,
+               material.classificacao,
+               material.politicaSugerida,
+               `<span class="badge bg-${decisaoClass}">${material.decisao}</span>`,
+               `<button class="btn btn-sm btn-primary detalhar-btn" data-material="${material.material}">
+                 <i class="fas fa-search"></i> Detalhes
+               </button>
+               <a href="/analisar/${material.material}" class="btn btn-sm btn-outline-primary">
+                 <i class="fas fa-edit"></i> Análise
+               </a>`
+             ]).draw(false);
+           });
+
+           $('.detalhar-btn').on('click', function(){
+             const materialId = $(this).data('material');
+             const material = dados.materiais.find(m => m.material === materialId);
+             if(material) mostrarDetalhes(material);
+           });
+
+           criarGraficoClassificacao(dados.materiais);
+           criarGraficoDecisao(dados.materiais);
+         },
+         error: function(err){
+           console.error('Erro ao carregar relatório', err);
+         }
+      });
+    }
+    
+    function mostrarDetalhes(material){
+      $('#detalheMaterial').text(material.material);
+      $('#detalheDescricao').text(material.descricao);
+      $('#detalheGrupoMRP').text(material.grupoMRP);
+      $('#detalheTipoMRP').text(material.tipoMRP);
+      $('#detalheClassificacao').text(material.classificacao);
+      $('#detalhePoliticaSugerida').text(material.politicaSugerida);
+      $('#detalheDecisao').text(material.decisao);
+      $('#detalheObservacoes').text(material.observacoes);
+      
+      $('#detalheSugestoes').empty();
+      if(material.sugestoes && material.sugestoes.length)
+        material.sugestoes.forEach(s => $('#detalheSugestoes').append(`<li class="list-group-item">${s}</li>`));
+      else
+        $('#detalheSugestoes').append('<li class="list-group-item">Nenhuma sugestão registrada</li>');
+      
+      $('#detalhePesquisa').empty();
+      if(material.pesquisa){
+        let pesquisaHtml = '<dl class="row">';
+        pesquisaHtml += `<dt class="col-sm-4">Referência atende:</dt><dd class="col-sm-8">${material.pesquisa.referencia_atende ? 'Sim' : 'Não'}</dd>`;
+        pesquisaHtml += `<dt class="col-sm-4">Disponível no mercado:</dt><dd class="col-sm-8">${material.pesquisa.disponivel_mercado ? 'Sim' : 'Não'}</dd>`;
+        pesquisaHtml += `<dt class="col-sm-4">Preço estimado adequado:</dt><dd class="col-sm-8">${material.pesquisa.preco_estimado_adequado ? 'Sim' : 'Não'}</dd>`;
+        pesquisaHtml += `<dt class="col-sm-4">Preço mercado:</dt><dd class="col-sm-8">${material.pesquisa.preco_mercado || 'N/A'}</dd>`;
+        pesquisaHtml += '</dl>';
+        if(material.pesquisa.referencias_sugeridas.length){
+          pesquisaHtml += '<h6>Referências sugeridas:</h6><ul>';
+          material.pesquisa.referencias_sugeridas.forEach(r => pesquisaHtml += `<li>${r}</li>`);
+          pesquisaHtml += '</ul>';
         }
-        
-        function mostrarDetalhes(material) {
-            // Preencher modal com detalhes do material
-            $('#detalheMaterial').text(material.material);
-            $('#detalheDescricao').text(material.descricao);
-            $('#detalheGrupoMRP').text(material.grupoMRP);
-            $('#detalheTipoMRP').text(material.tipoMRP);
-            $('#detalheClassificacao').text(material.classificacao);
-            $('#detalhePoliticaSugerida').text(material.politicaSugerida);
-            $('#detalheDecisao').text(material.decisao);
-            $('#detalheObservacoes').text(material.observacoes);
-            
-            // Preencher sugestões
-            $('#detalheSugestoes').empty();
-            if (material.sugestoes && material.sugestoes.length > 0) {
-                material.sugestoes.forEach(function(sugestao) {
-                    $('#detalheSugestoes').append(`<li class="list-group-item">${sugestao}</li>`);
-                });
-            } else {
-                $('#detalheSugestoes').append(`<li class="list-group-item">Nenhuma sugestão registrada</li>`);
-            }
-            
-            // Preencher pesquisa
-            $('#detalhePesquisa').empty();
-            
-            if (material.pesquisa) {
-                const pesquisa = material.pesquisa;
-                
-                let pesquisaHtml = '<dl class="row">';
-                
-                pesquisaHtml += `<dt class="col-sm-4">Referência atende:</dt>
-                                <dd class="col-sm-8">${pesquisa.referencia_atende ? 'Sim' : 'Não'}</dd>`;
-                
-                pesquisaHtml += `<dt class="col-sm-4">Disponível no mercado:</dt>
-                                <dd class="col-sm-8">${pesquisa.disponivel_mercado ? 'Sim' : 'Não'}</dd>`;
-                
-                pesquisaHtml += `<dt class="col-sm-4">Preço estimado adequado:</dt>
-                                <dd class="col-sm-8">${pesquisa.preco_estimado_adequado ? 'Sim' : 'Não'}</dd>`;
-                
-                pesquisaHtml += `<dt class="col-sm-4">Preço mercado:</dt>
-                                <dd class="col-sm-8">${pesquisa.preco_mercado || 'N/A'}</dd>`;
-                
-                pesquisaHtml += '</dl>';
-                
-                if (pesquisa.referencias_sugeridas && pesquisa.referencias_sugeridas.length > 0) {
-                    pesquisaHtml += '<h6>Referências sugeridas:</h6><ul>';
-                    
-                    pesquisa.referencias_sugeridas.forEach(function(ref) {
-                        pesquisaHtml += `<li>${ref}</li>`;
-                    });
-                    
-                    pesquisaHtml += '</ul>';
-                }
-                
-                if (pesquisa.observacoes) {
-                    pesquisaHtml += `<h6>Observações:</h6><p>${pesquisa.observacoes}</p>`;
-                }
-                
-                $('#detalhePesquisa').html(pesquisaHtml);
-            } else {
-                $('#detalhePesquisa').html('<p>Nenhuma pesquisa de mercado registrada</p>');
-            }
-            
-            // Configurar botão de análise
-            $('#detalheVerAnaliseBotao').attr('href', `/analisar/${material.material}`);
-            
-            // Mostrar modal
-            $('#detalhesModal').modal('show');
-        }
-        
-        function criarGraficoClassificacao(materiais) {
-            // Contar classificações
-            const classificacoes = {};
-            
-            materiais.forEach(function(material) {
-                if (classificacoes[material.classificacao]) {
-                    classificacoes[material.classificacao]++;
-                } else {
-                    classificacoes[material.classificacao] = 1;
-                }
-            });
-            
-            // Cores para cada classificação
-            const cores = {
-                'Suave': '#20c997',
-                'Errático': '#fd7e14',
-                'Intermitente': '#ffc107',
-                'Esporádico': '#dc3545',
-                'Consumo Zero': '#6c757d'
-            };
-            
-            // Criar gráfico
-            const ctx = document.getElementById('classificacaoChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(classificacoes),
-                    datasets: [{
-                        data: Object.values(classificacoes),
-                        backgroundColor: Object.keys(classificacoes).map(c => cores[c] || '#6c757d')
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'right'
-                        }
-                    }
-                }
-            });
-        }
-        
-        function criarGraficoDecisao(materiais) {
-            // Contar decisões
-            const decisoes = {
-                'Repor': 0,
-                'Não Repor': 0,
-                'Aguardando': 0
-            };
-            
-            materiais.forEach(function(material) {
-                if (decisoes[material.decisao] !== undefined) {
-                    decisoes[material.decisao]++;
-                }
-            });
-            
-            // Cores para cada decisão
-            const cores = {
-                'Repor': '#20c997',
-                'Não Repor': '#dc3545',
-                'Aguardando': '#ffc107'
-            };
-            
-            // Criar gráfico
-            const ctx = document.getElementById('decisaoChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(decisoes),
-                    datasets: [{
-                        data: Object.values(decisoes),
-                        backgroundColor: Object.keys(decisoes).map(d => cores[d])
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'right'
-                        }
-                    }
-                }
-            });
-        }
-        
-        function exportarExcel() {
-            // Esta função seria implementada em exportar.js
-            alert('Exportação para Excel iniciada');
-        }
-    </script>
+        if(material.pesquisa.observacoes)
+          pesquisaHtml += `<h6>Observações:</h6><p>${material.pesquisa.observacoes}</p>`;
+        $('#detalhePesquisa').html(pesquisaHtml);
+      } else {
+        $('#detalhePesquisa').html('<p>Nenhuma pesquisa de mercado registrada</p>');
+      }
+      
+      $('#detalheVerAnaliseBotao').attr('href', `/analisar/${material.material}`);
+      $('#detalhesModal').modal('show');
+    }
+    
+    function criarGraficoClassificacao(materiais){
+      const classificacoes = {};
+      materiais.forEach(m => { classificacoes[m.classificacao] = (classificacoes[m.classificacao] || 0) + 1; });
+      const ctx = document.getElementById('classificacaoChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: Object.keys(classificacoes),
+          datasets: [{ data: Object.values(classificacoes) }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'right' } } }
+      });
+    }
+    
+    function criarGraficoDecisao(materiais){
+      const decisoes = { 'Repor': 0, 'Não Repor': 0, 'Aguardando': 0 };
+      materiais.forEach(m => { if(decisoes[m.decisao] !== undefined) decisoes[m.decisao]++; });
+      const ctx = document.getElementById('decisaoChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(decisoes),
+          datasets: [{ data: Object.values(decisoes) }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'right' } } }
+      });
+    }
+    
+    function exportarExcel(){ alert('Exportação para Excel iniciada'); }
+  </script>
 </body>
 </html>

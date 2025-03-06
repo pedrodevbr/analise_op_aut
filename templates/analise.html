@@ -19,7 +19,7 @@
     <nav class="navbar navbar-expand-md navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">
-                <i class="fas fa-warehouse"></i> Sistema de Gestão de Estoque
+                <i class="fas fa-warehouse"></i> Sistema de Acompanhamento de Estoque
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -103,10 +103,21 @@
                                     <div class="label">Classificação:</div>
                                     <div class="value" id="infoClassificacao"></div>
                                 </div>
-                                
                                 <div class="material-property">
-                                    <div class="label">TMD:</div>
-                                    <div class="value" id="infoTMD"></div>
+                                    <div class="label">Rtp1:</div>
+                                    <div class="value" id="infoRTP1"></div>
+                                </div>
+                                <div class="material-property">
+                                    <div class="label">Rtp2:</div>
+                                    <div class="value" id="infoRTP2"></div>
+                                </div>
+                                <div class="material-property">
+                                    <div class="label">Rtp3:</div>
+                                    <div class="value" id="infoRTP3"></div>
+                                </div>
+                                <div class="material-property">
+                                    <div class="label">Rtp6:</div>
+                                    <div class="value" id="infoRTP6"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -176,10 +187,11 @@
                             <table class="table table-sm table-hover" id="reservasTable">
                                 <thead>
                                     <tr>
-                                        <th><i class="fas fa-hashtag"></i> Nº Reserva</th>
+                                        <th><i class="fas fa-hashtag"></i> Usuario</th>
                                         <th><i class="fas fa-calendar-alt"></i> Data</th>
                                         <th><i class="fas fa-clipboard"></i> Motivo</th>
                                         <th><i class="fas fa-sort-amount-down"></i> Quantidade</th>
+                                        <th><i class="fas fa-microchip"></i> Descrição do Equipamento</th>
                                     </tr>
                                 </thead>
                                 <tbody id="reservasTableBody">
@@ -308,6 +320,9 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            
+        <div>
     </div>
 
     <!-- Modal Template -->
