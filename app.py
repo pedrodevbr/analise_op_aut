@@ -424,42 +424,29 @@ def api_grafico_ltd(material_id):
                 'data': None
             }), 404
         
-        # Extrair os valores de LTD do dicionário
         # Os LTDs estão no formato "1 LTD", "2 LTD", etc.
         ltd_keys = sorted([k for k in dados_material.keys() if k.endswith('LTD')], 
-                         key=lambda x: int(x.split()[0]))  # Ordenar por número
-        
-        labels = [k.split()[0] for k in ltd_keys]  # Extrair apenas o número do LTD para o label
-        valores = [dados_material[k] for k in ltd_keys]  # Valores dos LTDs
+                        key=lambda x: int(x.split()[0]))  # Ordenar por número
+
+        labels = []
+        valores = []
+
+        for k in ltd_keys:
+            valor = dados_material[k]
+            # Verificar se o valor não é None e não é NaN
+            if valor is not None and valor == valor:  # valor == valor será False para NaN
+                labels.append(k.split()[0])  # Extrair apenas o número do LTD para o label
+                valores.append(valor)  # Valores dos LTDs válidos
         
         # Obter valores fixos para as linhas
         estoque_maximo = dados_material.get("Estoque máximo", 0)
         ponto_reabastecimento = dados_material.get("Ponto reabastec.", 0)
         
-        # Calcular a média dos LTDs para referência
-        media_ltd = round(sum(valores) / len(valores), 2) if valores else 0
-        
-        # Determinar a tendência com base nos valores
-        # Comparando o primeiro terço com o último terço dos valores
-        if len(valores) >= 3:
-            primeiro_terco = sum(valores[:len(valores)//3]) / (len(valores)//3)
-            ultimo_terco = sum(valores[-len(valores)//3:]) / (len(valores)//3)
-            
-            if ultimo_terco > primeiro_terco * 1.1:  # 10% maior
-                tendencia_texto = 'crescente'
-            elif primeiro_terco > ultimo_terco * 1.1:  # 10% maior
-                tendencia_texto = 'decrescente'
-            else:
-                tendencia_texto = 'estavel'
-        else:
-            tendencia_texto = 'estavel'
-        
+         
         # Criar o objeto de dados para o gráfico
         dados_grafico = {
             'labels': labels,
             'valores': valores,
-            'media': media_ltd,
-            'tendencia': tendencia_texto,
             'estoque_maximo': estoque_maximo,
             'ponto_reabastecimento': ponto_reabastecimento,
             'info_material': {

@@ -59,7 +59,7 @@ class DataProcessor:
         self.DEMAND_WINDOW = 3  # Anos para janela de demanda
         
 
-    def carregar_dados(self, file_paths, use_mock=True):
+    def carregar_dados(self, file_paths, use_mock=False):
         """
         Carrega os dados das planilhas ou usa dados mockup para desenvolvimento
         

@@ -8,7 +8,7 @@ let materiaisData = [];
 // Funções para manipulação de modais
 function showLoading(message = 'Processando, por favor aguarde...') {
     $('#loadingMessage').text(message);
-    $('#loadingModal').modal('show');
+    //$('#loadingModal').modal('show');
 }
 
 function hideLoading() {
@@ -238,9 +238,13 @@ function preencherDadosMaterial(material) {
     $('#infoRTP3').text(material['Qtd. RTP3'] || '0');
     $('#infoRTP6').text(material['Qtd. RTP6'] || '0');
 
+    // Informações de estoque
+    $('#infoLeadTime').text(material['Prz.entrg.prev.'] || '0');
     $('#infoEstoqueTotal').text(material['Estoque total'] || '0');
     $('#infoPontoReabastec').text(material['Ponto reabastec.'] || '0');
     $('#infoEstoqueMaximo').text(material['Estoque máximo'] || '0');
+    $('#infoPontoReabastecSug').text(material['Ponto reabastec.'] || '0');
+    $('#infoEstoqueMaximoSug').text(material['Estoque máximo'] || '0');
     $('#infoPrecoUnit').text(material['Preço Unit.'] || '0');
     $('#infoSaldoVirtual').text(material['Sld. Virtual'] || '0');
     $('#infoQtdOrdemPlanejada').text(material['Qtd.ordem planejada'] || '0');
@@ -602,9 +606,8 @@ function exportarRelatorio() {
 // Função para carregar material e seus dados associados
 function carregarMaterial(materialId) {
     // Mostrar modal de carregamento
-    $('#loadingModal').modal('show');
     $('#loadingMessage').text('Carregando dados do material...');
-    
+ 
     // Fazer requisição AJAX para obter dados do material
     $.ajax({
         url: `/material/${materialId}`,
@@ -728,8 +731,8 @@ function updateLTDChart(chartData) {
         window.ltdChart.data.datasets[0].data = chartData.valores;
         
         // Criar array com a média para todos os pontos
-        const mediaArray = chartData.labels.map(() => chartData.media);
-        window.ltdChart.data.datasets[1].data = mediaArray;
+        //const mediaArray = chartData.labels.map(() => chartData.media);
+        //window.ltdChart.data.datasets[1].data = mediaArray;
         
         // Atualizar o gráfico
         window.ltdChart.update();

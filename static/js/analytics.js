@@ -60,7 +60,7 @@ function initLTDChart() {
                     // Dataset principal - barras para os LTDs
                     {
                         type: 'bar',
-                        label: 'LTD (Lead Time Diário)',
+                        label: 'Consumo agrupado LTD',
                         data: [],
                         backgroundColor: 'rgba(67, 97, 238, 0.6)',
                         borderColor: 'rgba(67, 97, 238, 1)',
@@ -69,10 +69,22 @@ function initLTDChart() {
                         barPercentage: 0.8,  // Ajustar largura das barras para melhor visual
                         categoryPercentage: 0.9  // Ajustar espaçamento entre categorias
                     },
-                    // Dataset para linha de média
+                    // Dataset para linha de PR sugerido
                     {
                         type: 'line',
-                        label: 'Média LTD',
+                        label: 'PR sugerido',
+                        data: [],
+                        borderColor: '#f72585',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        pointRadius: 0,
+                        fill: false,
+                        order: 0
+                    },
+                     // Dataset para linha de PR sugerido
+                     {
+                        type: 'line',
+                        label: 'Max sugerido',
                         data: [],
                         borderColor: '#f72585',
                         borderWidth: 2,
@@ -232,7 +244,7 @@ function updateLTDChart(chartData) {
         console.log("Gráfico atualizado com sucesso");
         
         // Exibir informação sobre a tendência
-        const tendenciaEl = document.getElementById('ltdTendencia');
+        /*const tendenciaEl = document.getElementById('ltdTendencia');
         if (tendenciaEl) {
             let tendenciaClass = 'text-info';
             
@@ -246,27 +258,9 @@ function updateLTDChart(chartData) {
             tendenciaEl.innerHTML = formatarTendencia(chartData.tendencia);
         } else {
             console.warn("Elemento ltdTendencia não encontrado");
-        }
+        }*/
         
-        // Adicionar legenda abaixo do gráfico para Estoque Máximo e Ponto de Reabastecimento
-        const containerEl = document.getElementById('ltdChartContainer');
-        if (containerEl) {
-            // Verificar se a legenda já existe
-            let legendaEl = document.getElementById('ltdLegendaInfo');
-            if (!legendaEl) {
-                // Criar a legenda se não existir
-                legendaEl = document.createElement('div');
-                legendaEl.id = 'ltdLegendaInfo';
-                legendaEl.className = 'mt-3 small text-muted w-100';
-                containerEl.appendChild(legendaEl);
-            }
-            
-            // Atualizar o conteúdo da legenda
-            legendaEl.innerHTML = `<div class="d-flex justify-content-between">
-                <div><span class="badge bg-danger me-1"></span>Estoque Máximo: ${chartData.estoque_maximo}</div>
-                <div><span class="badge bg-warning me-1"></span>Ponto Reabastec.: ${chartData.ponto_reabastecimento}</div>
-            </div>`;
-        }
+        
     } catch (error) {
         console.error("Erro ao atualizar o gráfico:", error);
     }
